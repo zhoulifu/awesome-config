@@ -131,14 +131,11 @@ vicious.register(netwidget, vicious.widgets.net, "${eth0 up_kb}kb/s / ${eth0 dow
 -- Memory usage
 memicon = widget({ type = "imagebox" })
 memicon.image = image(home .. "/.config/awesome/icons/widgets/mem.png")
-membar = awful.widget.progressbar()
-membar:set_height(20):set_width(12):set_vertical(true)
-membar:set_color("#AECF96"):set_background_color("#494B4F")
-membar:set_gradient_colors({ '#AECF96', '#88A175', '#FF5656' })
-membar_tt = awful.tooltip({ objects = { membar.widget } })
-vicious.register(membar, vicious.widgets.mem, function (widget, args)
+memwidget = widget({ type = "textbox" })
+membar_tt = awful.tooltip({ objects = { memwidget, memicon } })
+vicious.register(memwidget, vicious.widgets.mem, function (widget, args)
                     membar_tt:set_text("RAM: " .. args[2] .. "MB/" .. args[3] .. "MB")
-                    return args[1]
+                    return args[1] .. "%"
                  end, 13)
 -- CPU usage
 cpuicon = widget({ type = "imagebox" })
@@ -235,7 +232,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock, calicon, separator,
         dnicon, netwidget, upicon, separator,
-        membar.widget, memicon, separator,
+        memwidget, memicon, separator,
         cpubar.widget, cpuicon, separator,
         s == 1 and mysystray or nil, separator,
         mytasklist[s], separator,
