@@ -40,7 +40,7 @@ home = os.getenv("HOME")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.init(home .. "/.config/awesome/theme/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -115,7 +115,7 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- {{{ Wibox
 -- Separators
 separator = widget({ type="imagebox" })
-separator.image = image(home .. "/.config/awesome/icons/widgets/separator.png")
+separator.image = image(beautiful.widget_separator_icon)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -124,13 +124,13 @@ mysystray = widget({ type = "systray" })
 -- Network usage
 dnicon = widget({ type = "imagebox" })
 upicon = widget({ type = "imagebox" })
-dnicon.image = image(home .. "/.config/awesome/icons/widgets/down.png")
-upicon.image = image(home .. "/.config/awesome/icons/widgets/up.png")
+dnicon.image = image(beautiful.widget_download_icon)
+upicon.image = image(beautiful.widget_upload_icon)
 netwidget = widget({ type = "textbox" })
 vicious.register(netwidget, vicious.widgets.net, "${eth0 up_kb}kb/s / ${eth0 down_kb}kb/s", 1)
 -- Memory usage
 memicon = widget({ type = "imagebox" })
-memicon.image = image(home .. "/.config/awesome/icons/widgets/mem.png")
+memicon.image = image(beautiful.widget_memory_icon)
 memwidget = widget({ type = "textbox" })
 membar_tt = awful.tooltip({ objects = { memwidget, memicon } })
 vicious.register(memwidget, vicious.widgets.mem, function (widget, args)
@@ -139,7 +139,7 @@ vicious.register(memwidget, vicious.widgets.mem, function (widget, args)
                  end, 13)
 -- CPU usage
 cpuicon = widget({ type = "imagebox" })
-cpuicon.image = image(home .. "/.config/awesome/icons/widgets/cpu.png")
+cpuicon.image = image(beautiful.widget_cpu_icon)
 cpubar = awful.widget.graph()
 cpubar:set_width(50):set_height(18)
 cpubar:set_color("#FF5656"):set_background_color("#494B4F")
@@ -152,7 +152,7 @@ vicious.register(cpubar, vicious.widgets.cpu,
                     end)
 -- Date and time
 calicon = widget({ type = "imagebox" })
-calicon.image = image(home .. "/.config/awesome/icons/widgets/cal.png")
+calicon.image = image(beautiful.widget_calander_icon)
 mytextclock = awful.widget.textclock({}, nil, 1)
 
 -- Create a wibox for each screen and add it
