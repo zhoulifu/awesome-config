@@ -35,7 +35,7 @@ theme.border_marked = "#91231c"
 theme.taglist_squares_sel   = theme.confdir .. "/theme/taglist/squarefw.png"
 theme.taglist_squares_unsel = theme.confdir .. "/theme/taglist/squarew.png"
 
-theme.tasklist_floating_icon = theme.confdir .. "/theme/tasklist/floatingw.png"
+theme.tasklist_floating_icon = theme.confdir .. "/theme/tasklist/floating.png"
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
