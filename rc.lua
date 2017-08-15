@@ -115,7 +115,7 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- {{{ Wibox
 -- Separators
 separator = widget({ type="imagebox" })
-separator.image = image(home .. "/.config/awesome/icons/separator.png")
+separator.image = image(home .. "/.config/awesome/icons/widgets/separator.png")
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -124,13 +124,13 @@ mysystray = widget({ type = "systray" })
 -- Network usage
 dnicon = widget({ type = "imagebox" })
 upicon = widget({ type = "imagebox" })
-dnicon.image = image(home .. "/.config/awesome/icons/down.png")
-upicon.image = image(home .. "/.config/awesome/icons/up.png")
+dnicon.image = image(home .. "/.config/awesome/icons/widgets/down.png")
+upicon.image = image(home .. "/.config/awesome/icons/widgets/up.png")
 netwidget = widget({ type = "textbox" })
 vicious.register(netwidget, vicious.widgets.net, "${eth0 up_kb}kb/s / ${eth0 down_kb}kb/s", 1)
 -- Memory usage
 memicon = widget({ type = "imagebox" })
-memicon.image = image(home .. "/.config/awesome/icons/mem.png")
+memicon.image = image(home .. "/.config/awesome/icons/widgets/mem.png")
 membar = awful.widget.progressbar()
 membar:set_height(20):set_width(12):set_vertical(true)
 membar:set_color("#AECF96"):set_background_color("#494B4F")
@@ -142,7 +142,7 @@ vicious.register(membar, vicious.widgets.mem, function (widget, args)
                  end, 13)
 -- CPU usage
 cpuicon = widget({ type = "imagebox" })
-cpuicon.image = image(home .. "/.config/awesome/icons/cpu.png")
+cpuicon.image = image(home .. "/.config/awesome/icons/widgets/cpu.png")
 cpubar = awful.widget.graph()
 cpubar:set_width(50):set_height(18)
 cpubar:set_color("#FF5656"):set_background_color("#494B4F")
@@ -155,7 +155,7 @@ vicious.register(cpubar, vicious.widgets.cpu,
                     end)
 -- Date and time
 calicon = widget({ type = "imagebox" })
-calicon.image = image(home .. "/.config/awesome/icons/cal.png")
+calicon.image = image(home .. "/.config/awesome/icons/widgets/cal.png")
 mytextclock = awful.widget.textclock({}, nil, 1)
 
 -- Create a wibox for each screen and add it
