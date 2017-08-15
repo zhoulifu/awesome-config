@@ -6,7 +6,8 @@ require("awful.rules")
 require("beautiful")
 -- Notification library
 require("naughty")
-
+-- Widget library
+require("vicious")
 -- Load Debian menu entries
 require("debian.menu")
 
@@ -112,11 +113,50 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- }}}
 
 -- {{{ Wibox
--- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+-- Separators
+separator = widget({ type="imagebox" })
+separator.image = image(home .. "/.config/awesome/icons/separator.png")
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
+
+-- Widgets
+-- Network usage
+dnicon = widget({ type = "imagebox" })
+upicon = widget({ type = "imagebox" })
+dnicon.image = image(home .. "/.config/awesome/icons/down.png")
+upicon.image = image(home .. "/.config/awesome/icons/up.png")
+netwidget = widget({ type = "textbox" })
+vicious.register(netwidget, vicious.widgets.net, "${eth0 up_kb}kb/s / ${eth0 down_kb}kb/s", 1)
+-- Memory usage
+memicon = widget({ type = "imagebox" })
+memicon.image = image(home .. "/.config/awesome/icons/mem.png")
+membar = awful.widget.progressbar()
+membar:set_height(20):set_width(12):set_vertical(true)
+membar:set_color("#AECF96"):set_background_color("#494B4F")
+membar:set_gradient_colors({ '#AECF96', '#88A175', '#FF5656' })
+membar_tt = awful.tooltip({ objects = { membar.widget } })
+vicious.register(membar, vicious.widgets.mem, function (widget, args)
+                    membar_tt:set_text("RAM: " .. args[2] .. "MB/" .. args[3] .. "MB")
+                    return args[1]
+                 end, 13)
+-- CPU usage
+cpuicon = widget({ type = "imagebox" })
+cpuicon.image = image(home .. "/.config/awesome/icons/cpu.png")
+cpubar = awful.widget.graph()
+cpubar:set_width(50):set_height(18)
+cpubar:set_color("#FF5656"):set_background_color("#494B4F")
+cpubar:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
+cpuwidget_tt = awful.tooltip({ objects = { cpubar.widget },})
+vicious.register(cpubar, vicious.widgets.cpu,
+                    function (widget, args)
+                        cpuwidget_tt:set_text("CPU Usage: " .. args[1] .. "%")
+                        return args[1]
+                    end)
+-- Date and time
+calicon = widget({ type = "imagebox" })
+calicon.image = image(home .. "/.config/awesome/icons/cal.png")
+mytextclock = awful.widget.textclock({}, nil, 1)
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -193,9 +233,12 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s],
-        mytextclock,
-        s == 1 and mysystray or nil,
-        mytasklist[s],
+        mytextclock, calicon, separator,
+        dnicon, netwidget, upicon, separator,
+        membar.widget, memicon, separator,
+        cpubar.widget, cpuicon, separator,
+        s == 1 and mysystray or nil, separator,
+        mytasklist[s], separator,
         layout = awful.widget.layout.horizontal.rightleft
     }
 end
