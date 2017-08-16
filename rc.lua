@@ -114,8 +114,8 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 
 -- {{{ Wibox
 -- Separators
-separator = widget({ type="imagebox" })
-separator.image = image(beautiful.widget_separator_icon)
+separator = widget({ type = "textbox" })
+separator.text = " | "
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -127,7 +127,15 @@ upicon = widget({ type = "imagebox" })
 dnicon.image = image(beautiful.widget_download_icon)
 upicon.image = image(beautiful.widget_upload_icon)
 netwidget = widget({ type = "textbox" })
-vicious.register(netwidget, vicious.widgets.net, "${eth0 up_kb}kb/s / ${eth0 down_kb}kb/s", 1)
+vicious.register(netwidget, vicious.widgets.net,
+                 function (widget, args)
+                       local down_kb = args["{eth0 down_kb}"]
+                       local up_kb = args["{eth0 up_kb}"]
+                       local up_unit = tonumber(up_kb) > 1024 and "mb" or "kb"
+                       local down_unit = tonumber(down_kb) > 1024 and "mb" or "kb"
+                       return args["{eth0 up_" .. up_unit .. "}"] .. up_unit .. "/s" ..
+                              " | " .. args["{eth0 down_" .. down_unit .. "}"] .. down_unit .. "/s"
+             end, 1)
 -- Memory usage
 memicon = widget({ type = "imagebox" })
 memicon.image = image(beautiful.widget_memory_icon)
@@ -229,7 +237,7 @@ for s = 1, screen.count() do
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
         },
-        mylayoutbox[s],
+        mylayoutbox[s], separator,
         mytextclock, calicon, separator,
         dnicon, netwidget, upicon, separator,
         memwidget, memicon, separator,
