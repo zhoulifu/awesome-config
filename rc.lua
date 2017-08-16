@@ -8,8 +8,11 @@ require("beautiful")
 require("naughty")
 -- Widget library
 require("vicious")
--- Load Debian menu entries
-require("debian.menu")
+-- Load menu entries
+require("menu")
+-- Extend the default keys
+require("shortcuts")
+
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -92,19 +95,9 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-application_menu = {
-  { "IntelliJ IDEA", home .. "/bin/idea"}
-}
-
-system_menu = {
-  {"Reboot", "sudo reboot"},
-  {"Shutdown", "sudo shutdown -h now"}
-}
-
 mymainmenu = awful.menu({ items = { { "Awesome", myawesomemenu, beautiful.awesome_icon },
---                                    { "Debian", debian.menu.Debian_menu.Debian },
-                                    { "Application", application_menu },
-                                    { "System", system_menu }
+                                    { "Application", menu.application },
+                                    { "System", menu.system }
                                   }
                         })
 
@@ -135,7 +128,7 @@ vicious.register(netwidget, vicious.widgets.net,
                        local down_unit = tonumber(down_kb) > 1024 and "mb" or "kb"
                        return args["{eth0 up_" .. up_unit .. "}"] .. up_unit .. "/s" ..
                               " | " .. args["{eth0 down_" .. down_unit .. "}"] .. down_unit .. "/s"
-             end, 1)
+                 end, 1)
 -- Memory usage
 memicon = widget({ type = "imagebox" })
 memicon.image = image(beautiful.widget_memory_icon)
@@ -243,7 +236,7 @@ for s = 1, screen.count() do
         memwidget, memicon, separator,
         cpubar.widget, cpuicon, separator,
         s == 1 and mysystray or nil, separator,
-        mytasklist[s], separator,
+        mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
 end
@@ -315,8 +308,7 @@ globalkeys = awful.util.table.join(
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
               end),
-    awful.key({ "Mod1",           }, "l",     function () awful.util.spawn("gnome-screensaver-command --lock") end),
-    awful.key({ }, "Print", function () awful.util.spawn("gnome-screenshot") end)
+    shortcuts.global
 )
 
 clientkeys = awful.util.table.join(
@@ -447,23 +439,5 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 
 -- {{{ Custom Settings
 -- Autorun programs
-function run_once(app)
-   awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " || (" .. app .. ")")
-end
-
-autorun = true
-autorun_apps =
-   {
-     home .. "/bin/fuck-hijack start",
-     "/usr/bin/gnome-screensaver",
-     "pcmanfm",
-     "chrome",
-     "thunderbird",
-     "ss-qt5"
-   }
-
-if autorun then
-    for app = 1, #autorun_apps do
-        run_once(autorun_apps[app])
-    end
-end
+require("autorun")
+autorun.run()
