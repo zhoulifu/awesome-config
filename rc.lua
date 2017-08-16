@@ -162,6 +162,19 @@ vicious.register(cpubar, vicious.widgets.cpu,
 calicon = widget({ type = "imagebox" })
 calicon.image = image(beautiful.widget_calander_icon)
 mytextclock = awful.widget.textclock({}, nil, 1)
+-- Weather
+tempicon = widget({ type = "imagebox" })
+tempicon.image = image(beautiful.widget_temperature_icon)
+weatherwidget = widget({ type = "textbox" })
+weather_tt = awful.tooltip({ objects = { weatherwidget } })
+vicious.register(weatherwidget, vicious.widgets.weather,
+                function (widget, args)
+                    weather_tt:set_text("City: " .. args["{city}"] ..
+                                        "\nWind: " .. args["{windkmh}"] .. "km/h " .. args["{wind}"] ..
+                                        "\nSky: " .. args["{sky}"] ..
+                                        "\nHumidity: " .. args["{humid}"] .. "%")
+                    return args["{tempc}"] .. "℃"
+                end, 1800, "ZSNJ")
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -238,6 +251,7 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
+        weatherwidget, tempicon, separator,
         mytextclock, calicon, separator,
         dnicon, netwidget, upicon, separator,
         memwidget, memicon, separator,
