@@ -155,6 +155,42 @@ vicious.register(cpubar, vicious.widgets.cpu,
 calicon = widget({ type = "imagebox" })
 calicon.image = image(beautiful.widget_calander_icon)
 mytextclock = awful.widget.textclock({}, nil, 1)
+-- Volume
+volume = {}
+volume.sid = "Master"
+volwidget = widget({ type = "textbox" })
+volicon = widget({ type = "imagebox" })
+volicon.image = image(beautiful.widget_volumn_icon)
+function volume.update (command)
+   local cmd = command or "amixer -D pulse get " .. volume.sid
+   local f = io.popen(cmd)
+   c = f:read("*all")
+   f:close()
+
+   local vol, mute = string.match(c, "([%d]+)%%.*%[([%l]*)")
+      if (vol == nil) or (mute == "off")
+      or (mute == "" and vol == "0") then
+         volwidget.text = '<span color="#FF0000">♫</span>'
+      else
+         volwidget.text = vol .. "%"
+      end
+end
+function volume.up ()
+   volume.update("amixer -D pulse sset " .. volume.sid .. " 3%+")
+end
+function volume.down ()
+   volume.update("amixer -D pulse sset " .. volume.sid .. " 3%-")
+end
+
+function volume.toggle ()
+   volume.update("amixer -D pulse sset " .. volume.sid .. " toggle")
+end
+volume.update()
+volicon:buttons(awful.util.table.join(
+   awful.button({}, 2, volume.toggle),
+   awful.button({}, 4, volume.up),
+   awful.button({}, 5, volume.down)
+))
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -231,6 +267,7 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
+        volwidget, volicon, separator,
         mytextclock, calicon, separator,
         dnicon, netwidget, upicon, separator,
         memwidget, memicon, separator,
