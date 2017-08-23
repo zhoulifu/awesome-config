@@ -13,7 +13,6 @@ require("menu")
 -- Extend the default keys
 require("shortcuts")
 
-
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -114,90 +113,12 @@ separator.text = " | "
 mysystray = widget({ type = "systray" })
 
 -- Widgets
--- Network usage
-function iface_detact ()
-   local f = io.popen("route")
-   local c = f:read("*all")
-   f:close()
-   return string.match(c, "default%s+[%.%d]+%s+[%.%d]+%s+%w+%s+%d%s+%d%s+%d%s(%w+)") or "lo"
-end
-iface = iface_detact()
-dnicon = widget({ type = "imagebox" })
-upicon = widget({ type = "imagebox" })
-dnicon.image = image(beautiful.widget_download_icon)
-upicon.image = image(beautiful.widget_upload_icon)
-netwidget = widget({ type = "textbox" })
-vicious.register(netwidget, vicious.widgets.net,
-                 function (widget, args)
-                       local down_kb = args["{" .. iface .. " down_kb}"]
-                       local up_kb = args["{" .. iface .. " up_kb}"]
-                       local up_unit = tonumber(up_kb) > 1024 and "mb" or "kb"
-                       local down_unit = tonumber(down_kb) > 1024 and "mb" or "kb"
-                       return args["{" .. iface .. " up_" .. up_unit .. "}"] .. up_unit .. "/s" ..
-                              " | " .. args["{" .. iface .. " down_" .. down_unit .. "}"] .. down_unit .. "/s"
-                 end, 1)
--- Memory usage
-memicon = widget({ type = "imagebox" })
-memicon.image = image(beautiful.widget_memory_icon)
-memwidget = widget({ type = "textbox" })
-membar_tt = awful.tooltip({ objects = { memwidget, memicon } })
-vicious.register(memwidget, vicious.widgets.mem, function (widget, args)
-                    membar_tt:set_text("RAM: " .. args[2] .. "MB/" .. args[3] .. "MB")
-                    return args[1] .. "%"
-                 end, 13)
--- CPU usage
-cpuicon = widget({ type = "imagebox" })
-cpuicon.image = image(beautiful.widget_cpu_icon)
-cpubar = awful.widget.graph()
-cpubar:set_width(50):set_height(18)
-cpubar:set_color("#FF5656"):set_background_color("#494B4F")
-cpubar:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
-cpuwidget_tt = awful.tooltip({ objects = { cpubar.widget },})
-vicious.register(cpubar, vicious.widgets.cpu,
-                    function (widget, args)
-                        cpuwidget_tt:set_text("CPU Usage: " .. args[1] .. "%")
-                        return args[1]
-                    end)
+require("widgets")
+
 -- Date and time
 calicon = widget({ type = "imagebox" })
 calicon.image = image(beautiful.widget_calander_icon)
 mytextclock = awful.widget.textclock({}, nil, 1)
--- Volume
-volume = {}
-volume.sid = "Master"
-volwidget = widget({ type = "textbox" })
-volicon = widget({ type = "imagebox" })
-volicon.image = image(beautiful.widget_volumn_icon)
-function volume.update (command)
-   local cmd = command or "amixer -D pulse get " .. volume.sid
-   local f = io.popen(cmd)
-   c = f:read("*all")
-   f:close()
-
-   local vol, mute = string.match(c, "([%d]+)%%.*%[([%l]*)")
-      if (vol == nil) or (mute == "off")
-      or (mute == "" and vol == "0") then
-         volwidget.text = '<span color="#FF0000">♫</span>'
-      else
-         volwidget.text = vol .. "%"
-      end
-end
-function volume.up ()
-   volume.update("amixer -D pulse sset " .. volume.sid .. " 3%+")
-end
-function volume.down ()
-   volume.update("amixer -D pulse sset " .. volume.sid .. " 3%-")
-end
-
-function volume.toggle ()
-   volume.update("amixer -D pulse sset " .. volume.sid .. " toggle")
-end
-volume.update()
-volicon:buttons(awful.util.table.join(
-   awful.button({}, 2, volume.toggle),
-   awful.button({}, 4, volume.up),
-   awful.button({}, 5, volume.down)
-))
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -274,11 +195,8 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
-        volwidget, volicon, separator,
         mytextclock, calicon, separator,
-        dnicon, netwidget, upicon, separator,
-        memwidget, memicon, separator,
-        cpubar.widget, cpuicon, separator,
+        widgets(),
         s == 1 and mysystray or nil, separator,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft

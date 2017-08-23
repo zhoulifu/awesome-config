@@ -100,6 +100,7 @@ theme.widget_upload_icon = theme.confdir .. "/icons/widgets/up.png"
 theme.widget_memory_icon = theme.confdir .. "/icons/widgets/mem.png"
 theme.widget_separator_icon = theme.confdir .. "/icons/widgets/separator.png"
 theme.widget_volumn_icon = theme.confdir .. "/icons/widgets/vol.png"
+theme.widget_net_icon = theme.confdir .. "/icons/widgets/wifi.png"
 
 return theme
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
