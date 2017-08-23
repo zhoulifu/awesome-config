@@ -115,6 +115,13 @@ mysystray = widget({ type = "systray" })
 
 -- Widgets
 -- Network usage
+function iface_detact ()
+   local f = io.popen("route")
+   local c = f:read("*all")
+   f:close()
+   return string.match(c, "default%s+[%.%d]+%s+[%.%d]+%s+%w+%s+%d%s+%d%s+%d%s(%w+)") or "lo"
+end
+iface = iface_detact()
 dnicon = widget({ type = "imagebox" })
 upicon = widget({ type = "imagebox" })
 dnicon.image = image(beautiful.widget_download_icon)
@@ -122,12 +129,12 @@ upicon.image = image(beautiful.widget_upload_icon)
 netwidget = widget({ type = "textbox" })
 vicious.register(netwidget, vicious.widgets.net,
                  function (widget, args)
-                       local down_kb = args["{eth0 down_kb}"]
-                       local up_kb = args["{eth0 up_kb}"]
+                       local down_kb = args["{" .. iface .. " down_kb}"]
+                       local up_kb = args["{" .. iface .. " up_kb}"]
                        local up_unit = tonumber(up_kb) > 1024 and "mb" or "kb"
                        local down_unit = tonumber(down_kb) > 1024 and "mb" or "kb"
-                       return args["{eth0 up_" .. up_unit .. "}"] .. up_unit .. "/s" ..
-                              " | " .. args["{eth0 down_" .. down_unit .. "}"] .. down_unit .. "/s"
+                       return args["{" .. iface .. " up_" .. up_unit .. "}"] .. up_unit .. "/s" ..
+                              " | " .. args["{" .. iface .. " down_" .. down_unit .. "}"] .. down_unit .. "/s"
                  end, 1)
 -- Memory usage
 memicon = widget({ type = "imagebox" })
