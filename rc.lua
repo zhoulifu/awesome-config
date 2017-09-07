@@ -10,8 +10,6 @@ require("naughty")
 require("vicious")
 -- Load menu entries
 require("menu")
--- Extend the default keys
-require("shortcuts")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -213,6 +211,7 @@ root.buttons(awful.util.table.join(
 -- }}}
 
 -- {{{ Key bindings
+require("shortcuts")
 globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
